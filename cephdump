@@ -11,7 +11,7 @@ logdir=/var/log/ceph
 getversion() {
 	for bin in /usr/bin/ceph*
 	do
-		nohup $bin -v > version_"$bin".txt
+		nohup $bin -v > version_"$(basename $bin | tr -d -)".txt
 	done
 	
 	for service in mgr mds mon osd
