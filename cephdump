@@ -36,9 +36,9 @@ getlogs() {
 getosd() {
 	nohup ceph osd df tree > df-tree.txt
 	nohup ceph osd crush tree > crush-tree.txt
-	nohup ceph osd stat > osd-stat
-	nohup ceph osd getmap -o osdmap.bin
-	nohup ceph osd getcrush map -o crushmap.bin
+	nohup ceph osd stat > osd-stat.txt
+	ceph osd getmap -o osdmap.bin
+	ceph osd getcrush map -o crushmap.bin
 	nohup ceph osd dump > osd_dump.txt
 	nohup ceph osd crush dump > crush_dump.txt
 	nohup ceph osd crush rule dump > crush_rule.txt
@@ -52,9 +52,9 @@ getmds() {
 # get the monitor details along with the binary of the monitor map
 getmon() {
 	nohup ceph auth ls > auth.txt
-	nohup ceph mon getmap -o monmap.bin
-	nohup ceph quorum_status -f json-pretty > quorum_status.txt
-	nohup ceph mon stat > mon_stat
+	ceph mon getmap -o monmap.bin
+	nohup ceph quorum_status -f json-pretty > mon_quorum_status.txt
+	nohup ceph mon stat > mon_stat.txt
 	nohup ceph mon dump > mon_dump.txt
 }
 
