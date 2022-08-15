@@ -1,0 +1,108 @@
+#!/bin/sh
+# XXX: Run this from a monitor node
+
+# directory name format: MMDDYY_HHMMSS
+dir="/tmp/$(date +%D_%T| tr -d '/:')"
+
+# default ceph log directory
+logdir=/var/log/ceph
+
+# get version details from ceph and the respective binaries
+getversion() {
+	for bin in /usr/bin/ceph*
+	do
+		nohup $bin -v > version_"$bin".txt
+	done
+	
+	for service in mgr mds mon osd
+	do
+		nohup ceph $service versions > version_$service.txt
+	done
+}
+
+# get the ceph.conf
+getconf() {
+	mkdir -p $dir/conf
+	[ -d /etc/ceph ] && cp -rv /etc/ceph $dir/conf
+}
+
+# get a copy of ceph's log directory
+getlogs() {
+	[ -d $logdir ] && mkdir -p $dir/logs
+	cp -rv $logdir $dir/logs
+}
+
+# get osd and CRUSH details along with the binary of the osd and crush map
+getosd() {
+	nohup ceph osd df tree > df-tree.txt
+	nohup ceph osd crush tree > crush-tree.txt
+	nohup ceph osd stat > osd-stat
+	nohup ceph osd getmap -o osdmap.bin
+	nohup ceph osd getcrush map -o crushmap.bin
+	nohup ceph osd dump > osd_dump.txt
+	nohup ceph osd crush dump > crush_dump.txt
+	nohup ceph osd crush rule dump > crush_rule.txt
+}
+
+# get mds details
+getmds() {
+	nohup ceph mds stat > mds_stat.txt
+}
+
+# get the monitor details along with the binary of the monitor map
+getmon() {
+	nohup ceph auth ls > auth.txt
+	nohup ceph mon getmap -o monmap.bin
+	nohup ceph quorum_status -f json-pretty > quorum_status.txt
+	nohup ceph mon stat > mon_stat
+	nohup ceph mon dump > mon_dump.txt
+}
+
+# get manager details and the modules in use
+getmgr() {
+	nohup ceph mgr dump > mgr_dump.txt
+	nohup ceph mgr module ls > mgr_mods.txt
+}
+
+# get cluster health, size and pg details
+gethealth() {
+	nohup ceph -s > status.txt
+	nohup ceph health detail > health.txt
+	nohup ceph df detail > df.txt
+	nohup rados df rados-df.txt
+	nohup ceph pg ls > pg.txt
+}
+
+# get all the pool and their respective image details
+getpool() {
+	nohup ceph osd lspools details > pool_details.txt
+	for pool in $(rados lspools)
+	do
+		nohup rbd -p $pool ls > pool_"$pool"_images.txt
+		nohup rbd -p $pool ls | while read img; do nohup rbd info -p $pool $img > pool_"$pool"_"$img"_details.txt; done
+	done
+}
+
+# create a tarball archive of the dump directory
+archive() {
+	out="$dir".tar.xz
+	cd /tmp
+	echo "archiving as $out"
+	tar -cJvf $out $dir
+}
+
+main() {
+	[ ! -d $dir ] && mkdir -p $dir && cd $dir
+
+	getversion
+	gethealth
+	getlogs
+	getconf
+	getosd
+	getmon
+	getmds
+	getmgr
+	getpool
+	archive
+}
+main
