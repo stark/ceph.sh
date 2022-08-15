@@ -75,7 +75,7 @@ gethealth() {
 
 # get all the pool and their respective image details
 getpool() {
-	nohup ceph osd lspools details > pool_details.txt
+	nohup ceph osd pool ls detail > pool_details.txt
 	for pool in $(rados lspools)
 	do
 		nohup rbd -p $pool ls > pool_"$pool"_images.txt
