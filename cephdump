@@ -69,7 +69,7 @@ gethealth() {
 	nohup ceph -s > status.txt
 	nohup ceph health detail > health.txt
 	nohup ceph df detail > df.txt
-	nohup rados df rados-df.txt
+	nohup rados df > rados-df.txt
 	nohup ceph pg ls > pg.txt
 }
 
