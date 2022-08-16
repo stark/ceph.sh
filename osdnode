@@ -1,0 +1,16 @@
+#!/bin/sh
+# usage: ./osdnode <hostname>
+# hostname must exist in the osd tree
+
+arg=$1
+
+if ceph osd df tree | grep -qi $arg; then
+	node=$(ceph osd tree | awk '/host/ { print $NF }' | grep -i $arg)
+else
+	echo "Error: $arg does not exist!"
+	exit 1
+fi
+
+osds=$(ceph osd ls-tree $h | sed 's/^[0-9]/osd.&/g'| tr '\n' '|' | sed 's/|$//')
+
+watch -t "echo $node; ceph osd df tree | sed -n 1p;ceph osd df tree | egrep \"$osds\""
