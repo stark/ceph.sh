@@ -91,6 +91,11 @@ archive() {
 	tar -cJvf $out $dir 1> /dev/null && echo "Saved as: $out"
 }
 
+cleanup() {
+	echo "Removing $dir directory"
+	rm -fr $dir
+}
+
 main() {
 	[ ! -d $dir ] && mkdir -p $dir && cd $dir
 
@@ -103,6 +108,6 @@ main() {
 	getmds
 	getmgr
 	getpool
-	archive
+	archive && cleanup
 }
 main
