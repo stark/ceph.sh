@@ -38,7 +38,7 @@ getosd() {
 	nohup ceph osd crush tree > crush-tree.txt
 	nohup ceph osd stat > osd-stat.txt
 	ceph osd getmap -o osdmap.bin
-	ceph osd getcrush map -o crushmap.bin
+	ceph osd getcrushmap -o crushmap.bin
 	nohup ceph osd dump > osd_dump.txt
 	nohup ceph osd crush dump > crush_dump.txt
 	nohup ceph osd crush rule dump > crush_rule.txt
