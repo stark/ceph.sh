@@ -35,6 +35,7 @@ getlogs() {
 
 # get osd and CRUSH details along with the binary of the osd and crush map
 getosd() {
+	nohup ceph osd metadata > osd_metadata.txt
 	nohup ceph osd df tree > df-tree.txt
 	nohup ceph osd crush tree > crush-tree.txt
 	nohup ceph osd stat > osd-stat.txt
@@ -48,10 +49,12 @@ getosd() {
 # get mds details
 getmds() {
 	nohup ceph mds stat > mds_stat.txt
+	nohup ceph mds metadata > mds_metadata.txt
 }
 
 # get the monitor details along with the binary of the monitor map
 getmon() {
+	nohup ceph mon metadata > mon_metadata.txt
 	nohup ceph auth ls > auth.txt
 	ceph mon getmap -o monmap.bin
 	nohup ceph quorum_status -f json-pretty > mon_quorum_status.txt
@@ -61,6 +64,7 @@ getmon() {
 
 # get manager details and the modules in use
 getmgr() {
+	nohup ceph mgr metadata > mgr_metadata.txt
 	nohup ceph mgr dump > mgr_dump.txt
 	nohup ceph mgr module ls > mgr_mods.txt
 }
