@@ -11,6 +11,6 @@ else
 	exit 1
 fi
 
-osds=$(ceph osd ls-tree $h | sed 's/^[0-9]/osd.&/g'| tr '\n' '|' | sed 's/|$//')
+osds=$(ceph osd ls-tree $node | sed 's/^[0-9]/osd.&/g'| tr '\n' '|' | sed 's/|$//')
 
 watch -t "echo $node; ceph osd df tree | sed -n 1p;ceph osd df tree | egrep \"$osds\""
