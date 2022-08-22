@@ -1,3 +1,3 @@
 #!/bin/sh
 # usage: ./osdtree
-watch "ceph osd df tree 2>&1 | sed -n 1p; ceph osd df tree 2>&1 | grep hdd | sort -g -k17 -r | head -n 50"
+watch "ceph osd df tree 2> /dev/null | sed -n 1p; ceph osd df tree 2> /dev/null | grep hdd | sort -g -k17 -r | head -n ${1:-50}"
